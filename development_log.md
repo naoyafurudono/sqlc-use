@@ -68,6 +68,14 @@
 - Dependabot設定（依存関係の自動更新）
 - .gitignore追加
 
+### lintエラー修正完了
+- golangci-lint設定を最新に更新
+- 古いlinter（deadcode, golint等）を削除し、新しいlinter（revive等）に置換
+- shadow変数エラー修正
+- 未使用パラメータの修正
+- blank importにコメント追加
+- gofmtによるコード整形
+
 ### 次のステップ
 - パッケージ名の対応（完全修飾名）
 - エラーハンドリングの強化

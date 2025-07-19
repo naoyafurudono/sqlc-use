@@ -6,7 +6,7 @@ import (
 	"github.com/naoyafurudono/sqlc-use/internal/models"
 	"github.com/pingcap/tidb/parser"
 	"github.com/pingcap/tidb/parser/ast"
-	_ "github.com/pingcap/tidb/parser/test_driver"
+	_ "github.com/pingcap/tidb/parser/test_driver" // required for parser
 )
 
 // MySQLAnalyzer analyzes MySQL queries

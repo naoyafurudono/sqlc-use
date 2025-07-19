@@ -25,7 +25,7 @@ func New(analyzerFactory analyzer.AnalyzerFactory, formatter formatter.Formatter
 }
 
 // Generate implements the plugin.Plugin interface
-func (p *UsePlugin) Generate(ctx context.Context, req *plugin.GenerateRequest) (*plugin.GenerateResponse, error) {
+func (p *UsePlugin) Generate(_ context.Context, req *plugin.GenerateRequest) (*plugin.GenerateResponse, error) {
 	if req == nil || req.Settings == nil {
 		return nil, fmt.Errorf("invalid request: missing settings")
 	}
@@ -45,9 +45,9 @@ func (p *UsePlugin) Generate(ctx context.Context, req *plugin.GenerateRequest) (
 	// Analyze all queries
 	report := make(models.UsageReport)
 	for _, query := range req.Queries {
-		usage, err := analyzer.Analyze(query.Name, query.Text)
-		if err != nil {
-			return nil, fmt.Errorf("failed to analyze query %s: %w", query.Name, err)
+		usage, analyzeErr := analyzer.Analyze(query.Name, query.Text)
+		if analyzeErr != nil {
+			return nil, fmt.Errorf("failed to analyze query %s: %w", query.Name, analyzeErr)
 		}
 
 		// For now, use query name without package prefix

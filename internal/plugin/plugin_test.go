@@ -58,7 +58,7 @@ func TestUsePlugin_Generate(t *testing.T) {
 			name: "successful generation",
 			setup: func() (*UsePlugin, *plugin.GenerateRequest) {
 				mockAnalyzerImpl := &mockAnalyzer{
-					analyzeFunc: func(queryName, sql string) (*models.QueryUsage, error) {
+					analyzeFunc: func(queryName, _ string) (*models.QueryUsage, error) {
 						return &models.QueryUsage{
 							QueryName: queryName,
 							Operations: []models.TableOperation{
@@ -101,7 +101,7 @@ func TestUsePlugin_Generate(t *testing.T) {
 			want: &plugin.GenerateResponse{
 				Files: []*plugin.File{
 					{
-						Name:     "query_usage.json",
+						Name: "query_usage.json",
 						Contents: []byte(`{
   "GetUser": [
     {

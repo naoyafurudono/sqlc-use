@@ -1,6 +1,7 @@
 package formatter
 
 import (
+	"bytes"
 	"encoding/json"
 	"testing"
 
@@ -99,7 +100,7 @@ func TestJSONFormatter_Format(t *testing.T) {
 				gotBytes, _ := json.MarshalIndent(gotJSON, "", "  ")
 				wantBytes, _ := json.MarshalIndent(wantJSON, "", "  ")
 
-				if string(gotBytes) != string(wantBytes) {
+				if !bytes.Equal(gotBytes, wantBytes) {
 					t.Errorf("Format() output mismatch\ngot:\n%s\nwant:\n%s", string(gotBytes), string(wantBytes))
 				}
 			}
