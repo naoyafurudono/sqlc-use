@@ -1,3 +1,4 @@
+// Package analyzer provides interfaces and implementations for analyzing SQL queries.
 package analyzer
 
 import (
@@ -10,8 +11,8 @@ type Analyzer interface {
 	Analyze(queryName, sql string) (*models.QueryTableOp, error)
 }
 
-// AnalyzerFactory creates analyzers based on the database engine
-type AnalyzerFactory interface {
+// Factory creates analyzers based on the database engine
+type Factory interface {
 	// Create returns an analyzer for the specified engine
 	Create(engine string) (Analyzer, error)
 }

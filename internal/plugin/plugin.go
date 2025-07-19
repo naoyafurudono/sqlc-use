@@ -12,12 +12,12 @@ import (
 
 // UsePlugin implements the sqlc plugin interface
 type UsePlugin struct {
-	analyzerFactory analyzer.AnalyzerFactory
+	analyzerFactory analyzer.Factory
 	formatter       formatter.Formatter
 }
 
 // New creates a new UsePlugin instance
-func New(analyzerFactory analyzer.AnalyzerFactory, formatterImpl formatter.Formatter) *UsePlugin {
+func New(analyzerFactory analyzer.Factory, formatterImpl formatter.Formatter) *UsePlugin {
 	return &UsePlugin{
 		analyzerFactory: analyzerFactory,
 		formatter:       formatterImpl,
