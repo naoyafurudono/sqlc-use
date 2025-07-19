@@ -1,43 +1,36 @@
+version: "2"
 run:
-  timeout: 5m
   tests: true
-
 linters:
   enable:
-    - gofmt
-    - govet
-    - gosec
-    - ineffassign
-    - misspell
-    - unconvert
+    - dupl
     - gocritic
     - gocyclo
-    - gosimple
-    - staticcheck
-    - unused
-    - typecheck
-    - errcheck
-    - dupl
-    - goimports
+    - gosec
+    - misspell
     - revive
-
-linters-settings:
-  govet:
-    enable:
-      - shadow
-  gocyclo:
-    min-complexity: 15
-  dupl:
-    threshold: 100
-  gocritic:
-    enabled-tags:
-      - diagnostic
-      - experimental
-      - opinionated
-      - performance
-      - style
-
+    - unconvert
+  settings:
+    dupl:
+      threshold: 100
+    gocritic:
+      enabled-tags:
+        - diagnostic
+        - experimental
+        - opinionated
+        - performance
+        - style
+    gocyclo:
+      min-complexity: 15
+    govet:
+      enable:
+        - shadow
+formatters:
+  enable:
+    - gofmt
+    - goimports
 issues:
+  exclude-generated: lax
   exclude-dirs:
     - vendor
     - examples

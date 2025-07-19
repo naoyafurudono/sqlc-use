@@ -1,3 +1,4 @@
+// Package plugin implements the main sqlc-use plugin logic for analyzing query usage.
 package plugin
 
 import (
