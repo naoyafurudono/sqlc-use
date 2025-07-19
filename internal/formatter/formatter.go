@@ -1,3 +1,4 @@
+// Package formatter provides interfaces and implementations for formatting query usage reports.
 package formatter
 
 import "github.com/naoyafurudono/sqlc-use/internal/models"

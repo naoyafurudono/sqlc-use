@@ -1,3 +1,4 @@
+// Package main is the entry point for the sqlc-use plugin.
 package main
 
 import (

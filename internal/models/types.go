@@ -1,3 +1,4 @@
+// Package models defines the data structures used for representing SQL query usage information.
 package models
 
 // TableOperation represents a single table operation in a query
