@@ -87,6 +87,15 @@
   - 統合テスト（sqlcがある場合）
 - ci-quickコマンドも追加（統合テストなし）
 
+### golangci-lint追加エラー修正完了
+- importShadow問題修正
+  - plugin.go: formatter/analyzerパラメータ名変更
+  - plugin_test.go: plugin変数名をpに変更
+- package-comments問題修正
+  - main.go, formatter.go, models/types.go, analyzer.goにパッケージコメント追加
+- exported type stutter問題修正
+  - AnalyzerFactoryをFactoryにリネーム
+
 ### 次のステップ
 - パッケージ名の対応（完全修飾名）
 - エラーハンドリングの強化
