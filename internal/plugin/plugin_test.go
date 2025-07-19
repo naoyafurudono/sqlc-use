@@ -140,8 +140,8 @@ func TestUsePlugin_Generate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			plugin, req := tt.setup()
-			got, err := plugin.Generate(context.Background(), req)
+			p, req := tt.setup()
+			got, err := p.Generate(context.Background(), req)
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Generate() error = %v, wantErr %v", err, tt.wantErr)
