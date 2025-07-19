@@ -17,10 +17,10 @@ type UsePlugin struct {
 }
 
 // New creates a new UsePlugin instance
-func New(analyzerFactory analyzer.AnalyzerFactory, formatter formatter.Formatter) *UsePlugin {
+func New(analyzerFactory analyzer.AnalyzerFactory, formatterImpl formatter.Formatter) *UsePlugin {
 	return &UsePlugin{
 		analyzerFactory: analyzerFactory,
-		formatter:       formatter,
+		formatter:       formatterImpl,
 	}
 }
 
@@ -37,7 +37,7 @@ func (p *UsePlugin) Generate(_ context.Context, req *plugin.GenerateRequest) (*p
 	}
 
 	// Create analyzer for the engine
-	analyzer, err := p.analyzerFactory.Create(engine)
+	analyzerImpl, err := p.analyzerFactory.Create(engine)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create analyzer: %w", err)
 	}
@@ -45,7 +45,7 @@ func (p *UsePlugin) Generate(_ context.Context, req *plugin.GenerateRequest) (*p
 	// Analyze all queries
 	report := make(models.UsageReport)
 	for _, query := range req.Queries {
-		usage, analyzeErr := analyzer.Analyze(query.Name, query.Text)
+		usage, analyzeErr := analyzerImpl.Analyze(query.Name, query.Text)
 		if analyzeErr != nil {
 			return nil, fmt.Errorf("failed to analyze query %s: %w", query.Name, analyzeErr)
 		}
