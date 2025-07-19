@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Query Table Operations",
+  "description": "Schema for declaring which operations each query performs on tables",
+  "type": "object",
+  "patternProperties": {
+    "^.+$": {
+      "description": "Query name as key, table operations as value",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/tableOperation"
+      },
+      "minItems": 1
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "tableOperation": {
+      "type": "object",
+      "description": "A single table operation",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "description": "Type of SQL operation",
+          "enum": ["select", "insert", "update", "delete"]
+        },
+        "table": {
+          "type": "string",
+          "description": "Name of the table being operated on",
+          "minLength": 1
+        }
+      },
+      "required": ["operation", "table"],
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "GetUser": [
+        {
+          "operation": "select",
+          "table": "users"
+        }
+      ],
+      "CreateUser": [
+        {
+          "operation": "insert",
+          "table": "users"
+        }
+      ],
+      "UpdateUserStatus": [
+        {
+          "operation": "update",
+          "table": "users"
+        }
+      ],
+      "ListUserPosts": [
+        {
+          "operation": "select",
+          "table": "users"
+        },
+        {
+          "operation": "select",
+          "table": "posts"
+        }
+      ]
+    }
+  ]
+}

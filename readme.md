@@ -5,10 +5,12 @@ sqlc-useはsqlcプラグインで、それぞれのクエリがテーブルに�
 ## 仕様
 
 ### 出力ファイル
+
 - **ファイル名**: `query_usage.json`
 - **出力先**: `sqlc.yaml`の`codegen.out`で指定したディレクトリ
 
 ### 出力フォーマット
+
 ```json
 {
   "クエリ名": [
@@ -23,26 +25,29 @@ sqlc-useはsqlcプラグインで、それぞれのクエリがテーブルに�
 - **操作タイプ**: `select`, `insert`, `update`, `delete`
 - **テーブル名**: SQL内で参照されているテーブル名
 - JOINで複数テーブルを参照する場合、各テーブルが個別に記録されます
+- **JSON Schema**: 出力形式の詳細な定義は[schema/query-table-operations.schema.json](schema/query-table-operations.schema.json)を参照
 
 ### 設定方法
 
 `sqlc.yaml`:
+
 ```yaml
-version: '2'
+version: "2"
 plugins:
   - name: sqlc-use
     process:
-      cmd: sqlc-use  # パスまたはコマンド名
+      cmd: sqlc-use # パスまたはコマンド名
 sql:
   - schema: schema.sql
     queries: query.sql
-    engine: mysql      # 現在はmysqlのみサポート
+    engine: mysql # 現在はmysqlのみサポート
     codegen:
-      - out: gen       # 出力ディレクトリ
+      - out: gen # 出力ディレクトリ
         plugin: sqlc-use
 ```
 
 ### オプション
+
 現在、プラグイン固有のオプションはありません。
 
 ## 例
@@ -66,6 +71,7 @@ delete from member where user_id = ? and organization_id = ?;
 ### 出力
 
 `gen/query_usage.json`:
+
 ```json
 {
   "ListOrganizationMember": [
