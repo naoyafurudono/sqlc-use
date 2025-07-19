@@ -14,7 +14,7 @@ inner join organization on organization.id = member.organization_id
 where organization.name = ?;
 
 -- name: AddMember :exec
-insert into member (user_id, organization_id) (?, ?);
+insert into member (user_id, organization_id) values (?, ?);
 
 -- name: RemoveMember :exec
 delete from member where user_id = ? and organization_id = ?;

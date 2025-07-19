@@ -24,5 +24,10 @@
 - RESPONSIBILITY_DIVISION.mdとIMPLEMENTATION_PLAN.mdを削除
 - よりコンパクトで管理しやすい構成に
 
+### MySQL対応に変更
+- PostgreSQLからMySQLを初期対応に変更
+- 依存関係をpingcap/tidb/parserに更新
+- README.mdのSQL構文をMySQL形式に修正
+
 ### 次のステップ
-- プロトタイプ実装の開始
+- MySQL対応のプロトタイプ実装の開始

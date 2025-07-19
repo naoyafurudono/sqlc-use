@@ -8,7 +8,7 @@ sqlc-useは、SQLクエリが使用するテーブルと操作を解析し、JSO
 - **プラグインタイプ**: プロセスプラグイン
 - **主要依存関係**: 
   - github.com/sqlc-dev/plugin-sdk-go
-  - github.com/pganalyze/pg_query_go/v5
+  - github.com/pingcap/tidb/parser (MySQL構文解析用)
 
 ## アーキテクチャ
 
@@ -79,7 +79,7 @@ plugins:
 sql:
   - schema: schema.sql
     queries: query.sql
-    engine: postgresql
+    engine: mysql
     codegen:
       - out: gen
         plugin: sqlc-use
@@ -97,7 +97,7 @@ sql:
 ### Phase 2: 高度な機能
 - JOIN解析
 - サブクエリ対応
-- 複数データベース対応
+- PostgreSQL/SQLite対応追加
 
 ### Phase 3: 最適化
 - パフォーマンス改善
