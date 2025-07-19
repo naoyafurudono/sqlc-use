@@ -19,5 +19,10 @@
 - 実装計画書（IMPLEMENTATION_PLAN.md）を作成
 - 3週間の段階的実装計画を策定
 
+### ドキュメント整理完了
+- DESIGN.mdに設計、責務分割、実装計画を統合
+- RESPONSIBILITY_DIVISION.mdとIMPLEMENTATION_PLAN.mdを削除
+- よりコンパクトで管理しやすい構成に
+
 ### 次のステップ
-- sqlcとの責務分割の明確化
+- プロトタイプ実装の開始

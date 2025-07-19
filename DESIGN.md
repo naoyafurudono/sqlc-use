@@ -1,42 +1,39 @@
-# sqlc-use プラグイン設計提案書
+# sqlc-use プラグイン設計書
 
 ## 概要
-sqlc-useは、SQLクエリが使用するテーブルと操作を解析し、JSONフォーマットで出力するsqlcプラグインです。本設計は「A Philosophy of Software Design」の原則に従います。
+sqlc-useは、SQLクエリが使用するテーブルと操作を解析し、JSONフォーマットで出力するsqlcプラグインです。
 
-## 設計原則
-
-### 1. Deep Modules（深いモジュール）
-シンプルなインターフェースと複雑な実装の隠蔽
-
-### 2. 複雑性の最小化
-各コンポーネントの責任を明確に分離し、相互依存を最小限に
-
-### 3. 戦略的プログラミング
-長期的な保守性を考慮した設計
+## 技術スタック
+- **言語**: Go
+- **プラグインタイプ**: プロセスプラグイン
+- **主要依存関係**: 
+  - github.com/sqlc-dev/plugin-sdk-go
+  - github.com/pganalyze/pg_query_go/v5
 
 ## アーキテクチャ
 
-### 実装方針
-- **言語**: Go
-- **プラグインタイプ**: プロセスプラグイン（標準入出力経由の通信）
-- **依存関係**: sqlc plugin SDK for Go
+### プロジェクト構造
+```
+sqlc-use/
+├── cmd/sqlc-use/          # エントリーポイント
+├── internal/
+│   ├── plugin/            # プラグインインターフェース
+│   ├── analyzer/          # SQL解析ロジック
+│   └── formatter/         # 出力フォーマット
+└── examples/              # 使用例
+```
 
 ### コアモジュール
 
-#### 1. Plugin Interface（プラグインインターフェース）
+#### 1. Plugin Interface
 ```go
-// シンプルな公開インターフェース
 type Plugin interface {
     Generate(req *plugin.GenerateRequest) (*plugin.GenerateResponse, error)
 }
 ```
-- **責任**: sqlcとの通信プロトコル処理
-- **隠蔽**: protobufのシリアライゼーション、エラーハンドリング
-- **実装**: sqlc plugin SDK for Goを使用
 
-#### 2. SQL Parser（SQLパーサー）
+#### 2. Query Analyzer
 ```go
-// 深いモジュール: シンプルなインターフェースで複雑なSQL解析を隠蔽
 type QueryAnalyzer interface {
     Analyze(query Query) ([]TableOperation, error)
 }
@@ -46,81 +43,67 @@ type TableOperation struct {
     Table     string
 }
 ```
-- **責任**: SQL文の解析とテーブル操作の抽出
-- **隠蔽**: SQL構文解析の複雑性、異なるSQL方言への対応
 
-#### 3. Output Formatter（出力フォーマッター）
+#### 3. Output Formatter
 ```go
-// 拡張可能な出力フォーマット
 type OutputFormatter interface {
     Format(operations map[string][]TableOperation) ([]byte, error)
 }
 ```
-- **責任**: 解析結果のJSON形式への変換
-- **隠蔽**: フォーマット詳細、インデント処理
 
-### 情報隠蔽の原則
+## 責務分割
 
-1. **SQL解析の複雑性を隠蔽**
-   - ユーザーはSQL方言の違いを意識する必要がない
-   - JOIN、サブクエリ、CTEの処理は内部で完結
+### sqlcの責務
+- SQLファイルのパースと構文解析
+- 型推論と検証
+- プラグインシステムの管理
+- スキーマ情報の提供
 
-2. **設定の簡潔性**
-   ```yaml
-   version: '2'
-   plugins:
-     - name: sqlc-use
-       process:
-         cmd: sqlc-use
-   sql:
-     - schema: schema.sql
-       queries: query.sql
-       engine: postgresql
-       codegen:
-         - out: gen
-           plugin: sqlc-use
-           options:
-             format: json  # デフォルト設定で動作
-   ```
+### sqlc-useの責務
+- クエリの使用テーブル解析
+- 操作タイプ（SELECT/INSERT等）の分類
+- JSON形式での出力生成
 
-3. **エラーの抽象化**
-   - 内部エラーを意味のあるユーザーメッセージに変換
-   - デバッグ情報は必要時のみ公開
+### データフロー
+```
+sqlc → (GenerateRequest) → sqlc-use → (GenerateResponse) → sqlc
+```
 
-## 実装計画
+## 設定例
+```yaml
+version: '2'
+plugins:
+  - name: sqlc-use
+    process:
+      cmd: sqlc-use
+sql:
+  - schema: schema.sql
+    queries: query.sql
+    engine: postgresql
+    codegen:
+      - out: gen
+        plugin: sqlc-use
+        options:
+          format: json
+```
+
+## 実装フェーズ
 
 ### Phase 1: 基本機能
-1. プラグインインターフェースの実装
-2. 基本的なSQL解析（SELECT, INSERT, UPDATE, DELETE）
-3. JSON出力の実装
+- プラグインインターフェース
+- 基本的なSQL解析（SELECT/INSERT/UPDATE/DELETE）
+- JSON出力
 
 ### Phase 2: 高度な機能
-1. JOIN解析の強化
-2. サブクエリサポート
-3. CTE（Common Table Expression）対応
+- JOIN解析
+- サブクエリ対応
+- 複数データベース対応
 
-### Phase 3: 拡張性
-1. カスタム出力フォーマット
-2. フィルタリング機能
-3. パフォーマンス最適化
+### Phase 3: 最適化
+- パフォーマンス改善
+- エラーハンドリング強化
 
-## 複雑性の管理
-
-### 認知的負荷の軽減
-- 各モジュールは単一の責任を持つ
-- インターフェースは最小限の知識で使用可能
-- ドキュメントは「なぜ」を説明（「何を」だけでなく）
-
-### テスタビリティ
-- 各モジュールは独立してテスト可能
-- モックを使った統合テスト
-- 実際のSQLクエリを使用したE2Eテスト
-
-## セキュリティ考慮事項
-- プロセスプラグインのため、信頼できる環境でのみ使用
-- 外部リソースへのアクセスは最小限に制限
-- 入力検証の徹底
-- SQLインジェクション対策（解析のみで実行はしない）
-
-## まとめ
-本設計は、シンプルなインターフェースで複雑な機能を提供し、長期的な保守性と拡張性を確保します。「A Philosophy of Software Design」の原則に従い、ユーザーが最小限の知識で最大限の価値を得られるプラグインを目指します。
+## 設計原則
+- **Deep Modules**: シンプルなインターフェースで複雑な実装を隠蔽
+- **単一責任**: 各モジュールは明確な一つの責務を持つ
+- **テスタビリティ**: 独立したテストが可能な設計
