@@ -97,6 +97,11 @@
   - AnalyzerFactoryをFactoryにリネーム
 
 ### golangci-lint v2.2.2マイグレーション完了
+
+### CI Go version 1.24.1修正完了
+- golangci-lintビルドバージョンとターゲットGoバージョンの不一致エラー解決
+- GitHub Actions workflowにGo 1.24.1を明示的に指定
+- 全ジョブ（test, lint, build, integration）でGo version設定を統一
 - golangci-lint migrate コマンドで自動マイグレーション実行
 - version: "2"をconfigファイルに追加
 - lintersセクションをv2フォーマットに再構築
