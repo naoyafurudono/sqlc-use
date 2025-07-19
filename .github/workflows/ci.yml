@@ -10,9 +10,6 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: ['1.21', '1.22']
     
     steps:
     - name: Checkout code
@@ -20,8 +17,6 @@ jobs:
     
     - name: Set up Go
       uses: actions/setup-go@v5
-      with:
-        go-version: ${{ matrix.go-version }}
     
     - name: Cache Go modules
       uses: actions/cache@v4
@@ -54,8 +49,6 @@ jobs:
     
     - name: Set up Go
       uses: actions/setup-go@v5
-      with:
-        go-version: '1.22'
     
     - name: Run golangci-lint
       uses: golangci/golangci-lint-action@v3
@@ -66,10 +59,6 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        go-version: ['1.22']
     
     steps:
     - name: Checkout code
@@ -77,8 +66,6 @@ jobs:
     
     - name: Set up Go
       uses: actions/setup-go@v5
-      with:
-        go-version: ${{ matrix.go-version }}
     
     - name: Build
       run: go build -v ./cmd/sqlc-use
@@ -98,8 +85,6 @@ jobs:
     
     - name: Set up Go
       uses: actions/setup-go@v5
-      with:
-        go-version: '1.22'
     
     - name: Install sqlc
       run: |
