@@ -13,10 +13,10 @@ import (
 
 // mockAnalyzer is a test double for analyzer
 type mockAnalyzer struct {
-	analyzeFunc func(queryName, sql string) (*models.QueryUsage, error)
+	analyzeFunc func(queryName, sql string) (*models.QueryTableOp, error)
 }
 
-func (m *mockAnalyzer) Analyze(queryName, sql string) (*models.QueryUsage, error) {
+func (m *mockAnalyzer) Analyze(queryName, sql string) (*models.QueryTableOp, error) {
 	if m.analyzeFunc != nil {
 		return m.analyzeFunc(queryName, sql)
 	}
@@ -58,8 +58,8 @@ func TestUsePlugin_Generate(t *testing.T) {
 			name: "successful generation",
 			setup: func() (*UsePlugin, *plugin.GenerateRequest) {
 				mockAnalyzerImpl := &mockAnalyzer{
-					analyzeFunc: func(queryName, _ string) (*models.QueryUsage, error) {
-						return &models.QueryUsage{
+					analyzeFunc: func(queryName, _ string) (*models.QueryTableOp, error) {
+						return &models.QueryTableOp{
 							QueryName: queryName,
 							Operations: []models.TableOperation{
 								{Operation: "select", Table: "users"},

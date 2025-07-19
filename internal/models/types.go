@@ -6,8 +6,8 @@ type TableOperation struct {
 	Table     string `json:"table"`
 }
 
-// QueryUsage represents the usage information for a single query
-type QueryUsage struct {
+// QueryTableOp represents the usage information for a single query
+type QueryTableOp struct {
 	QueryName  string           `json:"-"`
 	Operations []TableOperation `json:"operations"`
 }

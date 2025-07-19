@@ -7,7 +7,7 @@ import (
 // Analyzer defines the interface for SQL query analyzers
 type Analyzer interface {
 	// Analyze extracts table operations from a SQL query
-	Analyze(queryName, sql string) (*models.QueryUsage, error)
+	Analyze(queryName, sql string) (*models.QueryTableOp, error)
 }
 
 // AnalyzerFactory creates analyzers based on the database engine

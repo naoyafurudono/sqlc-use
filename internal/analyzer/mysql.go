@@ -22,14 +22,14 @@ func NewMySQLAnalyzer() *MySQLAnalyzer {
 }
 
 // Analyze extracts table operations from a MySQL query
-func (a *MySQLAnalyzer) Analyze(queryName, sql string) (*models.QueryUsage, error) {
+func (a *MySQLAnalyzer) Analyze(queryName, sql string) (*models.QueryTableOp, error) {
 	// Parse the SQL
 	stmtNodes, _, err := a.parser.Parse(sql, "", "")
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse SQL: %w", err)
 	}
 
-	usage := &models.QueryUsage{
+	usage := &models.QueryTableOp{
 		QueryName:  queryName,
 		Operations: []models.TableOperation{},
 	}

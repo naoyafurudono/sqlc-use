@@ -65,7 +65,7 @@ func TestJSONFormatter_OutputMatchesSchema(t *testing.T) {
 				}
 
 				if len(ops) != len(operations) {
-					t.Errorf("Query %s has %d operations in output, want %d", 
+					t.Errorf("Query %s has %d operations in output, want %d",
 						queryName, len(ops), len(operations))
 				}
 			}
