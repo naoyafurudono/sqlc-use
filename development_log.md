@@ -42,7 +42,20 @@
 - 明確なインターフェース定義による疎結合
 - 「A Philosophy of Software Design」のDeep Modules原則の適用
 
+### sqlc統合テスト完了
+- sqlc v1.29.0で動作確認
+- examples/gen/query_usage.jsonが正しく生成
+- 全てのクエリ（SELECT/INSERT/UPDATE/DELETE）の解析成功
+- JOINを含む複雑なクエリも正しく解析
+
+### 生成されたJSON
+- GetUser: SELECT from user
+- ListOrganizationMember: SELECT from user, member, organization (JOIN)
+- AddMember: INSERT into member
+- UpdateMemberRole: UPDATE member
+- RemoveMember: DELETE from member
+
 ### 次のステップ
-- sqlcとの実際の統合テスト
+- パッケージ名の対応（完全修飾名）
 - エラーハンドリングの強化
 - ドキュメントの充実
