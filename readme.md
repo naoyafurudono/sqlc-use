@@ -24,7 +24,7 @@ delete from member where user_id = ? and organization_id = ?;
 
 ```json
 {
-  "ListOrganizationMember": [
+  "github.com/sqlc-use/repository.ListOrganizationMember": [
     {
       "operation": "select",
       "table": "user"
@@ -38,13 +38,13 @@ delete from member where user_id = ? and organization_id = ?;
       "table": "organization"
     }
   ],
-  "AddMember": [
+  "github.com/sqlc-use/repository.AddMember": [
     {
       "operation": "insert",
       "table": "member"
     }
   ],
-  "RemoveMember": [
+  "github.com/sqlc-use/repository.RemoveMember": [
     {
       "operation": "delete",
       "table": "member"
