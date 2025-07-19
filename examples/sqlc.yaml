@@ -1,0 +1,14 @@
+version: '2'
+plugins:
+  - name: sqlc-use
+    process:
+      cmd: ../sqlc-use
+sql:
+  - schema: schema.sql
+    queries: query.sql
+    engine: mysql
+    codegen:
+      - out: gen
+        plugin: sqlc-use
+        options:
+          format: json
