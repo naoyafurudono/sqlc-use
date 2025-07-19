@@ -8,5 +8,16 @@
 - プロトコル：Protocol Bufferメッセージによるstdin/stdout通信
 - gRPCサービスインターフェースでメソッドサポート
 
+### 設計提案書の作成完了
+- DESIGN.mdファイルを作成
+- Deep Modulesの原則: シンプルなインターフェースで複雑な実装を隠蔽
+- 3つのコアモジュール: Plugin Interface、SQL Parser、Output Formatter
+- 段階的な実装計画（Phase 1-3）を策定
+
+### 設計をGoプロセスプラグインに更新完了
+- WASMからプロセスプラグインに変更
+- 実装計画書（IMPLEMENTATION_PLAN.md）を作成
+- 3週間の段階的実装計画を策定
+
 ### 次のステップ
-- A Philosophy of Software Designの原則に基づいた設計提案書の作成
+- sqlcとの責務分割の明確化

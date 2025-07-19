@@ -16,6 +16,11 @@ sqlc-useは、SQLクエリが使用するテーブルと操作を解析し、JSO
 
 ## アーキテクチャ
 
+### 実装方針
+- **言語**: Go
+- **プラグインタイプ**: プロセスプラグイン（標準入出力経由の通信）
+- **依存関係**: sqlc plugin SDK for Go
+
 ### コアモジュール
 
 #### 1. Plugin Interface（プラグインインターフェース）
@@ -27,6 +32,7 @@ type Plugin interface {
 ```
 - **責任**: sqlcとの通信プロトコル処理
 - **隠蔽**: protobufのシリアライゼーション、エラーハンドリング
+- **実装**: sqlc plugin SDK for Goを使用
 
 #### 2. SQL Parser（SQLパーサー）
 ```go
@@ -61,11 +67,20 @@ type OutputFormatter interface {
 
 2. **設定の簡潔性**
    ```yaml
-   codegen:
-     - out: gen
-       plugin: sqlc-use
-       options:
-         format: json  # デフォルト設定で動作
+   version: '2'
+   plugins:
+     - name: sqlc-use
+       process:
+         cmd: sqlc-use
+   sql:
+     - schema: schema.sql
+       queries: query.sql
+       engine: postgresql
+       codegen:
+         - out: gen
+           plugin: sqlc-use
+           options:
+             format: json  # デフォルト設定で動作
    ```
 
 3. **エラーの抽象化**
@@ -102,9 +117,10 @@ type OutputFormatter interface {
 - 実際のSQLクエリを使用したE2Eテスト
 
 ## セキュリティ考慮事項
-- WASMプラグインとして実装（サンドボックス環境）
-- 外部リソースへのアクセスなし
+- プロセスプラグインのため、信頼できる環境でのみ使用
+- 外部リソースへのアクセスは最小限に制限
 - 入力検証の徹底
+- SQLインジェクション対策（解析のみで実行はしない）
 
 ## まとめ
 本設計は、シンプルなインターフェースで複雑な機能を提供し、長期的な保守性と拡張性を確保します。「A Philosophy of Software Design」の原則に従い、ユーザーが最小限の知識で最大限の価値を得られるプラグインを目指します。
