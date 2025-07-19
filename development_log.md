@@ -55,6 +55,19 @@
 - UpdateMemberRole: UPDATE member
 - RemoveMember: DELETE from member
 
+### CI/CD設定完了
+- GitHub Actions設定
+  - マルチバージョンGo（1.21, 1.22）でのテスト
+  - golangci-lintによる静的解析
+  - マルチプラットフォームビルド（Linux/macOS/Windows）
+  - sqlcとの統合テスト
+- リリースワークフロー
+  - タグプッシュでの自動リリース
+  - マルチプラットフォームバイナリ生成
+  - チェックサム生成
+- Dependabot設定（依存関係の自動更新）
+- .gitignore追加
+
 ### 次のステップ
 - パッケージ名の対応（完全修飾名）
 - エラーハンドリングの強化

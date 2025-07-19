@@ -28,7 +28,7 @@ func TestMySQLAnalyzer_Analyze(t *testing.T) {
 		{
 			name:      "select with join",
 			queryName: "ListOrganizationMember",
-			sql: `SELECT user.* FROM user 
+			sql: `SELECT user.* FROM user
 				  INNER JOIN member ON user.id = member.user_id
 				  INNER JOIN organization ON organization.id = member.organization_id
 				  WHERE organization.name = ?`,

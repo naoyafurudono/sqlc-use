@@ -6,7 +6,7 @@ sqlc-useは、SQLクエリが使用するテーブルと操作を解析し、JSO
 ## 技術スタック
 - **言語**: Go
 - **プラグインタイプ**: プロセスプラグイン
-- **主要依存関係**: 
+- **主要依存関係**:
   - github.com/sqlc-dev/plugin-sdk-go
   - github.com/pingcap/tidb/parser (MySQL構文解析用)
 

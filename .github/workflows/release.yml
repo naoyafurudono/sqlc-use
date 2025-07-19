@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.22'
+    
+    - name: Run tests
+      run: go test -v ./...
+    
+    - name: Create release binaries
+      run: |
+        # Build for multiple platforms
+        GOOS=linux GOARCH=amd64 go build -o sqlc-use-linux-amd64 ./cmd/sqlc-use
+        GOOS=linux GOARCH=arm64 go build -o sqlc-use-linux-arm64 ./cmd/sqlc-use
+        GOOS=darwin GOARCH=amd64 go build -o sqlc-use-darwin-amd64 ./cmd/sqlc-use
+        GOOS=darwin GOARCH=arm64 go build -o sqlc-use-darwin-arm64 ./cmd/sqlc-use
+        GOOS=windows GOARCH=amd64 go build -o sqlc-use-windows-amd64.exe ./cmd/sqlc-use
+        
+        # Create checksums
+        sha256sum sqlc-use-* > checksums.txt
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          sqlc-use-*
+          checksums.txt
+        draft: false
+        prerelease: false
+        generate_release_notes: true
