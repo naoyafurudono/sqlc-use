@@ -6,7 +6,7 @@ sqlc-useはsqlcプラグインで、それぞれのクエリがテーブルに�
 
 ### 出力ファイル
 
-- **ファイル名**: `query_usage.json`
+- **ファイル名**: `query-table-operations.json`
 - **出力先**: `sqlc.yaml`の`codegen.out`で指定したディレクトリ
 
 ### 出力フォーマット
@@ -23,8 +23,8 @@ sqlc-useはsqlcプラグインで、それぞれのクエリがテーブルに�
 ```
 
 - **操作タイプ**: `select`, `insert`, `update`, `delete`
-- **テーブル名**: SQL内で参照されているテーブル名
-- JOINで複数テーブルを参照する場合、各テーブルが個別に記録されます
+- **テーブル名**: SQL内で操作されているテーブル名
+- JOINで複数テーブルを操作する場合、各テーブルが個別に記録されます
 - **JSON Schema**: 出力形式の詳細な定義は[schema/query-table-operations.schema.json](schema/query-table-operations.schema.json)を参照
 
 ### 設定方法
@@ -70,7 +70,7 @@ delete from member where user_id = ? and organization_id = ?;
 
 ### 出力
 
-`gen/query_usage.json`:
+`gen/query-table-operations.json`:
 
 ```json
 {
@@ -113,4 +113,4 @@ go install github.com/naoyafurudono/sqlc-use/cmd/sqlc-use@latest
 
 1. `sqlc.yaml`に上記の設定を追加
 2. `sqlc generate`を実行
-3. 指定した出力ディレクトリに`query_usage.json`が生成されます
+3. 指定した出力ディレクトリに`query-table-operations.json`が生成されます

@@ -65,7 +65,7 @@ func (p *UsePlugin) Generate(_ context.Context, req *plugin.GenerateRequest) (*p
 	resp := &plugin.GenerateResponse{
 		Files: []*plugin.File{
 			{
-				Name:     "query_usage.json",
+				Name:     "query-table-operations.json",
 				Contents: output,
 			},
 		},

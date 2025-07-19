@@ -114,5 +114,5 @@ jobs:
       run: |
         cd examples
         sqlc generate
-        test -f gen/query_usage.json
-        cat gen/query_usage.json
+        test -f gen/query-table-operations.json
+        cat gen/query-table-operations.json

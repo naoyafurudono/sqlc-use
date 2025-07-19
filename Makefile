@@ -54,7 +54,7 @@ ci: clean
 	@go test -race ./...
 	@go build ./cmd/sqlc-use
 	@if command -v sqlc >/dev/null 2>&1; then \
-		cd examples && sqlc generate && test -f gen/query_usage.json; \
+		cd examples && sqlc generate && test -f gen/query-table-operations.json; \
 	fi
 
 # Quick CI check (no integration test)

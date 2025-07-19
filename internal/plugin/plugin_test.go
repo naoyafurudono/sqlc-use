@@ -101,7 +101,7 @@ func TestUsePlugin_Generate(t *testing.T) {
 			want: &plugin.GenerateResponse{
 				Files: []*plugin.File{
 					{
-						Name: "query_usage.json",
+						Name: "query-table-operations.json",
 						Contents: []byte(`{
   "GetUser": [
     {
