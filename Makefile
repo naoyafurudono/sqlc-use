@@ -1,4 +1,7 @@
-.PHONY: build test clean install example ci ci-quick
+.PHONY: build test clean install example ci ci-quick help
+
+# Default target
+.DEFAULT_GOAL := help
 
 # Build the plugin binary
 build:
@@ -68,3 +71,17 @@ ci-quick: clean
 	@golangci-lint run ./...
 	@go test -race ./...
 	@go build ./cmd/sqlc-use
+
+# Show help
+help:
+	@echo "Available commands:"
+	@echo "  make build         Build the plugin binary"
+	@echo "  make test          Run all tests"
+	@echo "  make test-coverage Run tests with coverage report"
+	@echo "  make lint          Run golangci-lint"
+	@echo "  make fmt           Format code with gofmt"
+	@echo "  make clean         Remove build artifacts"
+	@echo "  make install       Install to GOPATH/bin"
+	@echo "  make example       Run sqlc generate in examples"
+	@echo "  make ci            Run all CI checks"
+	@echo "  make ci-quick      Run CI checks without integration test"
