@@ -154,7 +154,15 @@
 2. タグをプッシュ (git push origin vX.Y.Z)
 3. release.ymlがマルチプラットフォームバイナリを自動生成
 
+### UNION句のサポート追加
+- TiDBパーサーのSetOprStmtを使用してUNION句をサポート
+- UNION, UNION ALL, EXCEPT, INTERSECTの処理を実装
+- 単体テストでUNION句の動作を検証
+- 統合テストにUNIONクエリを追加
+- 全てのセット操作はSELECT操作として扱われる
+
 ### 次のステップ
 - エラーハンドリングの強化
 - ドキュメントの充実
 - PostgreSQL対応の追加
+- サブクエリのサポート
