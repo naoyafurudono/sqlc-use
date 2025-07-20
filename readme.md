@@ -2,6 +2,28 @@
 
 sqlc-useはsqlcプラグインで、それぞれのクエリがテーブルに対してどのような操作をするかを表現するJSONを生成します。
 
+## インストール
+
+### リリースバイナリから
+
+最新のリリースは[GitHub Releases](https://github.com/naoyafurudono/sqlc-use/releases)からダウンロードできます。
+
+```bash
+# Linux (AMD64)
+curl -L https://github.com/naoyafurudono/sqlc-use/releases/latest/download/sqlc-use-linux-amd64 -o sqlc-use
+chmod +x sqlc-use
+
+# macOS (Apple Silicon)
+curl -L https://github.com/naoyafurudono/sqlc-use/releases/latest/download/sqlc-use-darwin-arm64 -o sqlc-use
+chmod +x sqlc-use
+```
+
+### ソースからビルド
+
+```bash
+go install github.com/naoyafurudono/sqlc-use/cmd/sqlc-use@latest
+```
+
 ## 仕様
 
 ### 出力ファイル
@@ -115,14 +137,22 @@ delete from member where user_id = ? and organization_id = ?;
 }
 ```
 
-## インストール
-
-```bash
-go install github.com/naoyafurudono/sqlc-use/cmd/sqlc-use@latest
-```
-
 ## 使い方
 
 1. `sqlc.yaml`に上記の設定を追加
 2. `sqlc generate`を実行
 3. 指定した出力ディレクトリに`query-table-operations.json`が生成されます
+
+## バージョニング
+
+このプロジェクトは[セマンティックバージョニング](https://semver.org/lang/ja/)に従います。
+
+- **メジャーバージョン**: 後方互換性のない変更
+- **マイナーバージョン**: 後方互換性のある機能追加
+- **パッチバージョン**: 後方互換性のあるバグ修正
+
+リリースは[tagpr](https://github.com/Songmu/tagpr)を使用して自動化されています。
+
+## ライセンス
+
+MITライセンス
