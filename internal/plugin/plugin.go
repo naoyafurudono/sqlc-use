@@ -3,6 +3,7 @@ package plugin
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/naoyafurudono/sqlc-use/internal/analyzer"
@@ -37,6 +38,14 @@ func (p *UsePlugin) Generate(_ context.Context, req *plugin.GenerateRequest) (*p
 		return nil, fmt.Errorf("database engine not specified")
 	}
 
+	// Parse plugin options
+	opts := DefaultOptions()
+	if len(req.PluginOptions) > 0 {
+		if err := json.Unmarshal(req.PluginOptions, &opts); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal plugin options: %w", err)
+		}
+	}
+
 	// Create analyzer for the engine
 	analyzerImpl, err := p.analyzerFactory.Create(engine)
 	if err != nil {
@@ -51,9 +60,12 @@ func (p *UsePlugin) Generate(_ context.Context, req *plugin.GenerateRequest) (*p
 			return nil, fmt.Errorf("failed to analyze query %s: %w", query.Name, analyzeErr)
 		}
 
-		// For now, use query name without package prefix
-		// TODO: Parse package name from PluginOptions if needed
-		report[query.Name] = usage.Operations
+		// Use fully qualified name if package is specified
+		queryName := query.Name
+		if opts.Package != "" {
+			queryName = opts.Package + "." + query.Name
+		}
+		report[queryName] = usage.Operations
 	}
 
 	// Format the report

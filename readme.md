@@ -13,7 +13,7 @@ sqlc-useはsqlcプラグインで、それぞれのクエリがテーブルに�
 
 ```json
 {
-  "クエリ名": [
+  "[package.]クエリ名": [
     {
       "operation": "操作タイプ",
       "table": "テーブル名"
@@ -48,7 +48,19 @@ sql:
 
 ### オプション
 
-現在、プラグイン固有のオプションはありません。
+プラグインオプションは `sqlc.yaml` の `options` フィールドで指定できます：
+
+```yaml
+codegen:
+  - out: gen
+    plugin: sqlc-use
+    options:
+      package: db  # クエリ名のプレフィックス（オプション）
+      format: json # 出力フォーマット（デフォルト: json）
+```
+
+- **package**: 指定した場合、出力されるクエリ名が `package.QueryName` の形式になります
+- **format**: 現在は `json` のみサポート
 
 ## 例
 
@@ -74,7 +86,7 @@ delete from member where user_id = ? and organization_id = ?;
 
 ```json
 {
-  "ListOrganizationMember": [
+  "db.ListOrganizationMember": [
     {
       "operation": "select",
       "table": "user"
@@ -88,13 +100,13 @@ delete from member where user_id = ? and organization_id = ?;
       "table": "organization"
     }
   ],
-  "AddMember": [
+  "db.AddMember": [
     {
       "operation": "insert",
       "table": "member"
     }
   ],
-  "RemoveMember": [
+  "db.RemoveMember": [
     {
       "operation": "delete",
       "table": "member"

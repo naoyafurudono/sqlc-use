@@ -136,6 +136,78 @@ func TestUsePlugin_Generate(t *testing.T) {
 			want:    nil,
 			wantErr: true,
 		},
+		{
+			name: "with package name",
+			setup: func() (*UsePlugin, *plugin.GenerateRequest) {
+				mockAnalyzerImpl := &mockAnalyzer{
+					analyzeFunc: func(queryName, _ string) (*models.QueryTableOp, error) {
+						return &models.QueryTableOp{
+							QueryName: queryName,
+							Operations: []models.TableOperation{
+								{Operation: "select", Table: "users"},
+							},
+						}, nil
+					},
+				}
+
+				factory := &mockAnalyzerFactory{
+					createFunc: func(engine string) (analyzer.Analyzer, error) {
+						if engine != "mysql" {
+							return nil, errors.New("unsupported engine")
+						}
+						return mockAnalyzerImpl, nil
+					},
+				}
+
+				formatter := &mockFormatter{
+					formatFunc: func(report models.UsageReport) ([]byte, error) {
+						return json.MarshalIndent(report, "", "  ")
+					},
+				}
+
+				p := New(factory, formatter)
+				req := &plugin.GenerateRequest{
+					Settings: &plugin.Settings{
+						Engine: "mysql",
+					},
+					PluginOptions: []byte(`{"package": "myapp.db", "format": "json"}`),
+					Queries: []*plugin.Query{
+						{
+							Name: "GetUser",
+							Text: "SELECT * FROM users WHERE id = ?",
+						},
+						{
+							Name: "CreateUser",
+							Text: "INSERT INTO users (name, email) VALUES (?, ?)",
+						},
+					},
+				}
+
+				return p, req
+			},
+			want: &plugin.GenerateResponse{
+				Files: []*plugin.File{
+					{
+						Name: "query-table-operations.json",
+						Contents: []byte(`{
+  "myapp.db.CreateUser": [
+    {
+      "operation": "select",
+      "table": "users"
+    }
+  ],
+  "myapp.db.GetUser": [
+    {
+      "operation": "select",
+      "table": "users"
+    }
+  ]
+}`),
+					},
+				},
+			},
+			wantErr: false,
+		},
 	}
 
 	for _, tt := range tests {

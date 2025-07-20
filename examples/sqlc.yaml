@@ -11,4 +11,5 @@ sql:
       - out: gen
         plugin: sqlc-use
         options:
+          package: db
           format: json
