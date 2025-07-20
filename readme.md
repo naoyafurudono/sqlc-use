@@ -151,27 +151,7 @@ delete from member where user_id = ? and organization_id = ?;
 - **マイナーバージョン**: 後方互換性のある機能追加
 - **パッチバージョン**: 後方互換性のあるバグ修正
 
-リリースは[tagpr](https://github.com/Songmu/tagpr)を使用して自動化されています。
-
-## トラブルシューティング
-
-### tagprがPull Requestを作成できない場合
-
-GitHub Actionsの権限エラーが発生する場合は、以下のいずれかの方法で解決してください：
-
-#### 方法1: リポジトリ設定を変更（推奨）
-1. GitHubリポジトリの **Settings → Actions → General** に移動
-2. **Workflow permissions** セクションで：
-   - 「Read and write permissions」を選択
-   - 「Allow GitHub Actions to create and approve pull requests」にチェック
-
-#### 方法2: Personal Access Token (PAT) を使用
-1. GitHubで[Personal Access Token](https://github.com/settings/tokens/new)を作成
-   - 必要なスコープ: `repo`, `workflow`
-2. リポジトリの **Settings → Secrets and variables → Actions** でシークレットを追加
-   - Name: `PAT_TOKEN`
-   - Value: 作成したトークン
-3. `.github/workflows/tagpr-pat.yml.example` を参考に設定
+バージョンタグをプッシュすると、GitHub Actionsが自動的にリリースビルドを作成します。
 
 ## ライセンス
 
