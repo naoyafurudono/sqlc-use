@@ -46,3 +46,7 @@ build = "Build System"
 ci = "Continuous Integration"
 chore = "Chores"
 revert = "Reverts"
+[tagpr]
+	vPrefix = true
+	releaseBranch = main
+	versionFile = -
