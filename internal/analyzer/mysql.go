@@ -2,8 +2,9 @@ package analyzer
 
 import (
 	"fmt"
+	"sort"
+	"strings"
 
-	"github.com/naoyafurudono/sqlc-use/internal/models"
 	"github.com/pingcap/tidb/parser"
 	"github.com/pingcap/tidb/parser/ast"
 	_ "github.com/pingcap/tidb/parser/test_driver" // required for parser
@@ -21,18 +22,15 @@ func NewMySQLAnalyzer() *MySQLAnalyzer {
 	}
 }
 
-// Analyze extracts table operations from a MySQL query
-func (a *MySQLAnalyzer) Analyze(queryName, sql string) (*models.QueryTableOp, error) {
+// Analyze extracts table effects from a MySQL query
+func (a *MySQLAnalyzer) Analyze(queryName, sql string) (string, error) {
 	// Parse the SQL
 	stmtNodes, _, err := a.parser.Parse(sql, "", "")
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse SQL: %w", err)
+		return "", fmt.Errorf("failed to parse SQL: %w", err)
 	}
 
-	usage := &models.QueryTableOp{
-		QueryName:  queryName,
-		Operations: []models.TableOperation{},
-	}
+	operations := make(map[string]string)
 
 	// Analyze each statement
 	for _, stmtNode := range stmtNodes {
@@ -67,16 +65,14 @@ func (a *MySQLAnalyzer) Analyze(queryName, sql string) (*models.QueryTableOp, er
 			continue
 		}
 
-		// Convert visitor results to operations
+		// Merge visitor results
 		for table, operation := range visitor.operations {
-			usage.Operations = append(usage.Operations, models.TableOperation{
-				Operation: operation,
-				Table:     table,
-			})
+			operations[table] = operation
 		}
 	}
 
-	return usage, nil
+	// Convert to effects string format
+	return formatEffects(operations), nil
 }
 
 // tableVisitor visits AST nodes to extract table information
@@ -113,4 +109,20 @@ func (v *tableVisitor) Enter(node ast.Node) (ast.Node, bool) {
 // Leave is called when leaving a node
 func (v *tableVisitor) Leave(node ast.Node) (ast.Node, bool) {
 	return node, true // true = continue traversal
+}
+
+// formatEffects converts operation map to effects string format
+func formatEffects(operations map[string]string) string {
+	if len(operations) == 0 {
+		return "{ }"
+	}
+
+	// Sort for consistent output
+	var effects []string
+	for table, operation := range operations {
+		effects = append(effects, operation+"["+table+"]")
+	}
+	sort.Strings(effects)
+
+	return "{ " + strings.Join(effects, " | ") + " }"
 }

@@ -14,25 +14,24 @@ func TestJSONFormatter_OutputMatchesSchema(t *testing.T) {
 	// Test that our output format matches the JSON schema
 	tests := []struct {
 		name   string
-		report models.UsageReport
+		report *models.EffectsReport
 	}{
 		{
 			name: "simple operations",
-			report: models.UsageReport{
-				"GetUser": []models.TableOperation{
-					{Operation: "select", Table: "users"},
-				},
-				"CreateUser": []models.TableOperation{
-					{Operation: "insert", Table: "users"},
+			report: &models.EffectsReport{
+				Version: "1.0",
+				Effects: map[string]string{
+					"GetUser": "{ select[users] }",
+					"CreateUser": "{ insert[users] }",
 				},
 			},
 		},
 		{
 			name: "complex with joins",
-			report: models.UsageReport{
-				"ListUserPosts": []models.TableOperation{
-					{Operation: "select", Table: "users"},
-					{Operation: "select", Table: "posts"},
+			report: &models.EffectsReport{
+				Version: "1.0",
+				Effects: map[string]string{
+					"ListUserPosts": "{ select[users] | select[posts] }",
 				},
 			},
 		},
@@ -70,20 +69,16 @@ func TestJSONFormatter_OutputMatchesSchema(t *testing.T) {
 			}
 
 			// Validate each query is in effects
-			for queryName, operations := range tt.report {
-				effectStr, exists := effects[queryName].(string)
+			for queryName, expectedEffect := range tt.report.Effects {
+				actualEffect, exists := effects[queryName].(string)
 				if !exists {
 					t.Errorf("Query %s not found in effects", queryName)
 					continue
 				}
 
-				// Basic validation that effect string contains expected operations
-				for _, op := range operations {
-					expectedPattern := op.Operation + "[" + op.Table + "]"
-					if !contains(effectStr, expectedPattern) {
-						t.Errorf("Effect for %s doesn't contain expected pattern %s",
-							queryName, expectedPattern)
-					}
+				if actualEffect != expectedEffect {
+					t.Errorf("Effect for %s = %s, want %s",
+						queryName, actualEffect, expectedEffect)
 				}
 			}
 		})

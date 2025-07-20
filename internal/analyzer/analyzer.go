@@ -1,14 +1,10 @@
 // Package analyzer provides interfaces and implementations for analyzing SQL queries.
 package analyzer
 
-import (
-	"github.com/naoyafurudono/sqlc-use/internal/models"
-)
-
 // Analyzer defines the interface for SQL query analyzers
 type Analyzer interface {
-	// Analyze extracts table operations from a SQL query
-	Analyze(queryName, sql string) (*models.QueryTableOp, error)
+	// Analyze extracts table effects from a SQL query
+	Analyze(queryName, sql string) (string, error)
 }
 
 // Factory creates analyzers based on the database engine

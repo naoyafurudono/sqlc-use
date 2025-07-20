@@ -11,15 +11,16 @@ import (
 func TestJSONFormatter_Format(t *testing.T) {
 	tests := []struct {
 		name    string
-		report  models.UsageReport
+		report  *models.EffectsReport
 		want    string
 		wantErr bool
 	}{
 		{
 			name: "single query single operation",
-			report: models.UsageReport{
-				"GetUser": []models.TableOperation{
-					{Operation: "select", Table: "users"},
+			report: &models.EffectsReport{
+				Version: "1.0",
+				Effects: map[string]string{
+					"GetUser": "{ select[users] }",
 				},
 			},
 			want: `{
@@ -32,14 +33,11 @@ func TestJSONFormatter_Format(t *testing.T) {
 		},
 		{
 			name: "multiple queries multiple operations",
-			report: models.UsageReport{
-				"ListOrganizationMember": []models.TableOperation{
-					{Operation: "select", Table: "user"},
-					{Operation: "select", Table: "member"},
-					{Operation: "select", Table: "organization"},
-				},
-				"AddMember": []models.TableOperation{
-					{Operation: "insert", Table: "member"},
+			report: &models.EffectsReport{
+				Version: "1.0",
+				Effects: map[string]string{
+					"ListOrganizationMember": "{ select[user] | select[member] | select[organization] }",
+					"AddMember": "{ insert[member] }",
 				},
 			},
 			want: `{
@@ -53,7 +51,7 @@ func TestJSONFormatter_Format(t *testing.T) {
 		},
 		{
 			name:    "empty report",
-			report:  models.UsageReport{},
+			report:  models.NewEffectsReport(),
 			want:    `{
   "version": "1.0",
   "effects": {}

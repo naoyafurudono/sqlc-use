@@ -1,11 +1,7 @@
 package analyzer
 
 import (
-	"reflect"
-	"sort"
 	"testing"
-
-	"github.com/naoyafurudono/sqlc-use/internal/models"
 )
 
 func TestMySQLAnalyzer_Analyze(t *testing.T) {
@@ -13,16 +9,14 @@ func TestMySQLAnalyzer_Analyze(t *testing.T) {
 		name      string
 		queryName string
 		sql       string
-		want      []models.TableOperation
+		want      string
 		wantErr   bool
 	}{
 		{
 			name:      "simple select",
 			queryName: "GetUser",
 			sql:       "SELECT * FROM users WHERE id = ?",
-			want: []models.TableOperation{
-				{Operation: "select", Table: "users"},
-			},
+			want: "{ select[users] }",
 			wantErr: false,
 		},
 		{
@@ -32,65 +26,49 @@ func TestMySQLAnalyzer_Analyze(t *testing.T) {
 				  INNER JOIN member ON user.id = member.user_id
 				  INNER JOIN organization ON organization.id = member.organization_id
 				  WHERE organization.name = ?`,
-			want: []models.TableOperation{
-				{Operation: "select", Table: "user"},
-				{Operation: "select", Table: "member"},
-				{Operation: "select", Table: "organization"},
-			},
+			want: "{ select[member] | select[organization] | select[user] }",
 			wantErr: false,
 		},
 		{
 			name:      "insert",
 			queryName: "AddMember",
 			sql:       "INSERT INTO member (user_id, organization_id) VALUES (?, ?)",
-			want: []models.TableOperation{
-				{Operation: "insert", Table: "member"},
-			},
+			want: "{ insert[member] }",
 			wantErr: false,
 		},
 		{
 			name:      "update",
 			queryName: "UpdateUser",
 			sql:       "UPDATE users SET name = ? WHERE id = ?",
-			want: []models.TableOperation{
-				{Operation: "update", Table: "users"},
-			},
+			want:      "{ update[users] }",
 			wantErr: false,
 		},
 		{
 			name:      "delete",
 			queryName: "RemoveMember",
 			sql:       "DELETE FROM member WHERE user_id = ? AND organization_id = ?",
-			want: []models.TableOperation{
-				{Operation: "delete", Table: "member"},
-			},
+			want: "{ delete[member] }",
 			wantErr: false,
 		},
 		{
 			name:      "invalid sql",
 			queryName: "Invalid",
 			sql:       "INVALID SQL STATEMENT",
-			want:      nil,
+			want:      "",
 			wantErr:   true,
 		},
 		{
 			name:      "union simple",
 			queryName: "GetActiveAndInactiveUsers",
 			sql:       "SELECT * FROM active_users UNION SELECT * FROM inactive_users",
-			want: []models.TableOperation{
-				{Operation: "select", Table: "active_users"},
-				{Operation: "select", Table: "inactive_users"},
-			},
+			want: "{ select[active_users] | select[inactive_users] }",
 			wantErr: false,
 		},
 		{
 			name:      "union all",
 			queryName: "GetAllTransactions",
 			sql:       "SELECT * FROM transactions_2023 UNION ALL SELECT * FROM transactions_2024",
-			want: []models.TableOperation{
-				{Operation: "select", Table: "transactions_2023"},
-				{Operation: "select", Table: "transactions_2024"},
-			},
+			want: "{ select[transactions_2023] | select[transactions_2024] }",
 			wantErr: false,
 		},
 		{
@@ -101,12 +79,7 @@ func TestMySQLAnalyzer_Analyze(t *testing.T) {
 				  UNION
 				  SELECT c.id, c.name FROM customers c
 				  JOIN purchases p ON c.id = p.customer_id`,
-			want: []models.TableOperation{
-				{Operation: "select", Table: "users"},
-				{Operation: "select", Table: "orders"},
-				{Operation: "select", Table: "customers"},
-				{Operation: "select", Table: "purchases"},
-			},
+			want: "{ select[customers] | select[orders] | select[purchases] | select[users] }",
 			wantErr: false,
 		},
 	}
@@ -122,23 +95,11 @@ func TestMySQLAnalyzer_Analyze(t *testing.T) {
 			}
 
 			if !tt.wantErr {
-				// Sort operations for stable comparison
-				sortOperations(got.Operations)
-				sortOperations(tt.want)
-
-				if !reflect.DeepEqual(got.Operations, tt.want) {
-					t.Errorf("Analyze() operations = %v, want %v", got.Operations, tt.want)
+				if got != tt.want {
+					t.Errorf("Analyze() = %v, want %v", got, tt.want)
 				}
 			}
 		})
 	}
 }
 
-func sortOperations(ops []models.TableOperation) {
-	sort.Slice(ops, func(i, j int) bool {
-		if ops[i].Table != ops[j].Table {
-			return ops[i].Table < ops[j].Table
-		}
-		return ops[i].Operation < ops[j].Operation
-	})
-}

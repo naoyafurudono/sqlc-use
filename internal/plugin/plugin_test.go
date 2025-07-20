@@ -13,14 +13,14 @@ import (
 
 // mockAnalyzer is a test double for analyzer
 type mockAnalyzer struct {
-	analyzeFunc func(queryName, sql string) (*models.QueryTableOp, error)
+	analyzeFunc func(queryName, sql string) (string, error)
 }
 
-func (m *mockAnalyzer) Analyze(queryName, sql string) (*models.QueryTableOp, error) {
+func (m *mockAnalyzer) Analyze(queryName, sql string) (string, error) {
 	if m.analyzeFunc != nil {
 		return m.analyzeFunc(queryName, sql)
 	}
-	return nil, errors.New("not implemented")
+	return "", errors.New("not implemented")
 }
 
 // mockAnalyzerFactory is a test double for analyzer factory
@@ -37,10 +37,10 @@ func (m *mockAnalyzerFactory) Create(engine string) (analyzer.Analyzer, error) {
 
 // mockFormatter is a test double for formatter
 type mockFormatter struct {
-	formatFunc func(report models.UsageReport) ([]byte, error)
+	formatFunc func(report *models.EffectsReport) ([]byte, error)
 }
 
-func (m *mockFormatter) Format(report models.UsageReport) ([]byte, error) {
+func (m *mockFormatter) Format(report *models.EffectsReport) ([]byte, error) {
 	if m.formatFunc != nil {
 		return m.formatFunc(report)
 	}
@@ -58,13 +58,8 @@ func TestUsePlugin_Generate(t *testing.T) {
 			name: "successful generation",
 			setup: func() (*UsePlugin, *plugin.GenerateRequest) {
 				mockAnalyzerImpl := &mockAnalyzer{
-					analyzeFunc: func(queryName, _ string) (*models.QueryTableOp, error) {
-						return &models.QueryTableOp{
-							QueryName: queryName,
-							Operations: []models.TableOperation{
-								{Operation: "select", Table: "users"},
-							},
-						}, nil
+					analyzeFunc: func(queryName, _ string) (string, error) {
+						return "{ select[users] }", nil
 					},
 				}
 
@@ -78,7 +73,7 @@ func TestUsePlugin_Generate(t *testing.T) {
 				}
 
 				formatter := &mockFormatter{
-					formatFunc: func(report models.UsageReport) ([]byte, error) {
+					formatFunc: func(report *models.EffectsReport) ([]byte, error) {
 						return json.MarshalIndent(report, "", "  ")
 					},
 				}
@@ -103,12 +98,10 @@ func TestUsePlugin_Generate(t *testing.T) {
 					{
 						Name: "query-table-operations.json",
 						Contents: []byte(`{
-  "GetUser": [
-    {
-      "operation": "select",
-      "table": "users"
-    }
-  ]
+  "version": "1.0",
+  "effects": {
+    "GetUser": "{ select[users] }"
+  }
 }`),
 					},
 				},
@@ -140,13 +133,8 @@ func TestUsePlugin_Generate(t *testing.T) {
 			name: "with package name",
 			setup: func() (*UsePlugin, *plugin.GenerateRequest) {
 				mockAnalyzerImpl := &mockAnalyzer{
-					analyzeFunc: func(queryName, _ string) (*models.QueryTableOp, error) {
-						return &models.QueryTableOp{
-							QueryName: queryName,
-							Operations: []models.TableOperation{
-								{Operation: "select", Table: "users"},
-							},
-						}, nil
+					analyzeFunc: func(queryName, _ string) (string, error) {
+						return "{ select[users] }", nil
 					},
 				}
 
@@ -160,7 +148,7 @@ func TestUsePlugin_Generate(t *testing.T) {
 				}
 
 				formatter := &mockFormatter{
-					formatFunc: func(report models.UsageReport) ([]byte, error) {
+					formatFunc: func(report *models.EffectsReport) ([]byte, error) {
 						return json.MarshalIndent(report, "", "  ")
 					},
 				}
@@ -190,18 +178,11 @@ func TestUsePlugin_Generate(t *testing.T) {
 					{
 						Name: "query-table-operations.json",
 						Contents: []byte(`{
-  "myapp.db.CreateUser": [
-    {
-      "operation": "select",
-      "table": "users"
-    }
-  ],
-  "myapp.db.GetUser": [
-    {
-      "operation": "select",
-      "table": "users"
-    }
-  ]
+  "version": "1.0",
+  "effects": {
+    "myapp.db.CreateUser": "{ select[users] }",
+    "myapp.db.GetUser": "{ select[users] }"
+  }
 }`),
 					},
 				},

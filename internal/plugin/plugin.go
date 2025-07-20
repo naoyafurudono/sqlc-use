@@ -53,9 +53,9 @@ func (p *UsePlugin) Generate(_ context.Context, req *plugin.GenerateRequest) (*p
 	}
 
 	// Analyze all queries
-	report := make(models.UsageReport)
+	report := models.NewEffectsReport()
 	for _, query := range req.Queries {
-		usage, analyzeErr := analyzerImpl.Analyze(query.Name, query.Text)
+		effects, analyzeErr := analyzerImpl.Analyze(query.Name, query.Text)
 		if analyzeErr != nil {
 			return nil, fmt.Errorf("failed to analyze query %s: %w", query.Name, analyzeErr)
 		}
@@ -65,7 +65,7 @@ func (p *UsePlugin) Generate(_ context.Context, req *plugin.GenerateRequest) (*p
 		if opts.Package != "" {
 			queryName = opts.Package + "." + query.Name
 		}
-		report[queryName] = usage.Operations
+		report.Effects[queryName] = effects
 	}
 
 	// Format the report
