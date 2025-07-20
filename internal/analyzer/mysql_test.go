@@ -73,6 +73,42 @@ func TestMySQLAnalyzer_Analyze(t *testing.T) {
 			want:      nil,
 			wantErr:   true,
 		},
+		{
+			name:      "union simple",
+			queryName: "GetActiveAndInactiveUsers",
+			sql:       "SELECT * FROM active_users UNION SELECT * FROM inactive_users",
+			want: []models.TableOperation{
+				{Operation: "select", Table: "active_users"},
+				{Operation: "select", Table: "inactive_users"},
+			},
+			wantErr: false,
+		},
+		{
+			name:      "union all",
+			queryName: "GetAllTransactions",
+			sql:       "SELECT * FROM transactions_2023 UNION ALL SELECT * FROM transactions_2024",
+			want: []models.TableOperation{
+				{Operation: "select", Table: "transactions_2023"},
+				{Operation: "select", Table: "transactions_2024"},
+			},
+			wantErr: false,
+		},
+		{
+			name:      "union with joins",
+			queryName: "GetComplexUnion",
+			sql: `SELECT u.id, u.name FROM users u 
+				  JOIN orders o ON u.id = o.user_id
+				  UNION
+				  SELECT c.id, c.name FROM customers c
+				  JOIN purchases p ON c.id = p.customer_id`,
+			want: []models.TableOperation{
+				{Operation: "select", Table: "users"},
+				{Operation: "select", Table: "orders"},
+				{Operation: "select", Table: "customers"},
+				{Operation: "select", Table: "purchases"},
+			},
+			wantErr: false,
+		},
 	}
 
 	for _, tt := range tests {

@@ -15,3 +15,8 @@ UPDATE member SET role = ? WHERE user_id = ? AND organization_id = ?;
 
 -- name: RemoveMember :exec
 DELETE FROM member WHERE user_id = ? AND organization_id = ?;
+
+-- name: GetAllUsers :many
+SELECT * FROM user WHERE active = true
+UNION
+SELECT * FROM user WHERE last_login > DATE_SUB(NOW(), INTERVAL 30 DAY);

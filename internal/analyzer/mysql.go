@@ -41,10 +41,18 @@ func (a *MySQLAnalyzer) Analyze(queryName, sql string) (*models.QueryTableOp, er
 		}
 
 		// Determine operation type and visit nodes
-		switch stmtNode.(type) {
+		switch stmt := stmtNode.(type) {
 		case *ast.SelectStmt:
 			visitor.defaultOperation = "select"
 			stmtNode.Accept(visitor)
+		case *ast.SetOprStmt:
+			// SetOprStmt handles UNION, EXCEPT, INTERSECT operations
+			visitor.defaultOperation = "select"
+			if stmt.SelectList != nil {
+				for _, selectNode := range stmt.SelectList.Selects {
+					selectNode.Accept(visitor)
+				}
+			}
 		case *ast.InsertStmt:
 			visitor.defaultOperation = "insert"
 			stmtNode.Accept(visitor)
