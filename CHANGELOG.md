@@ -7,9 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2025-01-20
+
 ### Added
 - Support for UNION, UNION ALL clauses
 - Support for other set operations (EXCEPT, INTERSECT) via SetOprStmt
+
+### Changed
+- **BREAKING**: Output format now follows dirty-effects.schema.json specification
+  - Output now includes `version` field (1.0)
+  - Query effects wrapped in `effects` object
+  - Effects use string format: `{ operation[table] | operation[table] }`
+- Simplified internal architecture
+  - Removed intermediate TableOperation and UsageReport types
+  - Analyzers now return effects strings directly
+  - Formatter interface simplified to only handle EffectsReport
+- Improved performance by eliminating conversion steps
+
+### Technical Details
+- Reduced codebase by 91 lines (105 additions, 196 deletions)
+- Direct processing flow without intermediate transformations
+- All tests updated to match new structure
 
 ## [0.1.0] - 2025-01-20
 
