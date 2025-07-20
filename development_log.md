@@ -161,6 +161,22 @@
 - 統合テストにUNIONクエリを追加
 - 全てのセット操作はSELECT操作として扱われる
 
+### JSONスキーマフォーマット移行完了
+- dirty-effects.schema.jsonの新フォーマットに対応
+- 出力形式を変更：
+  - 旧: `{"QueryName": [{"operation": "select", "table": "users"}]}`
+  - 新: `{"version": "1.0", "effects": {"QueryName": "{ select[users] }"}}`
+- models.EffectsReport型を追加
+- JSONFormatterでフォーマット変換ロジックを実装
+- 全テストを新フォーマットに対応
+- 既存のコードとの後方互換性を維持（内部的には旧形式を使用）
+
+### 実装の詳細
+- `internal/models/types.go`: EffectsReport構造体を追加
+- `internal/formatter/json.go`: convertToEffectsReportメソッドで変換処理
+- 複数操作は`|`で連結: `{ select[users] | update[balance] | insert[logs] }`
+- 空の操作は`{ }`として出力
+
 ### 次のステップ
 - エラーハンドリングの強化
 - ドキュメントの充実
