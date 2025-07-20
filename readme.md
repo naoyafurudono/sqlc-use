@@ -4,22 +4,6 @@ sqlc-useはsqlcプラグインで、それぞれのクエリがテーブルに�
 
 ## インストール
 
-### リリースバイナリから
-
-最新のリリースは[GitHub Releases](https://github.com/naoyafurudono/sqlc-use/releases)からダウンロードできます。
-
-```bash
-# Linux (AMD64)
-curl -L https://github.com/naoyafurudono/sqlc-use/releases/latest/download/sqlc-use-linux-amd64 -o sqlc-use
-chmod +x sqlc-use
-
-# macOS (Apple Silicon)
-curl -L https://github.com/naoyafurudono/sqlc-use/releases/latest/download/sqlc-use-darwin-arm64 -o sqlc-use
-chmod +x sqlc-use
-```
-
-### ソースからビルド
-
 ```bash
 go install github.com/naoyafurudono/sqlc-use/cmd/sqlc-use@latest
 ```
@@ -151,7 +135,6 @@ delete from member where user_id = ? and organization_id = ?;
 - **マイナーバージョン**: 後方互換性のある機能追加
 - **パッチバージョン**: 後方互換性のあるバグ修正
 
-バージョンタグをプッシュすると、GitHub Actionsが自動的にリリースビルドを作成します。
 
 ## ライセンス
 
