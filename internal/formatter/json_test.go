@@ -23,12 +23,10 @@ func TestJSONFormatter_Format(t *testing.T) {
 				},
 			},
 			want: `{
-  "GetUser": [
-    {
-      "operation": "select",
-      "table": "users"
-    }
-  ]
+  "version": "1.0",
+  "effects": {
+    "GetUser": "{ select[users] }"
+  }
 }`,
 			wantErr: false,
 		},
@@ -45,33 +43,21 @@ func TestJSONFormatter_Format(t *testing.T) {
 				},
 			},
 			want: `{
-  "AddMember": [
-    {
-      "operation": "insert",
-      "table": "member"
-    }
-  ],
-  "ListOrganizationMember": [
-    {
-      "operation": "select",
-      "table": "user"
-    },
-    {
-      "operation": "select",
-      "table": "member"
-    },
-    {
-      "operation": "select",
-      "table": "organization"
-    }
-  ]
+  "version": "1.0",
+  "effects": {
+    "AddMember": "{ insert[member] }",
+    "ListOrganizationMember": "{ select[user] | select[member] | select[organization] }"
+  }
 }`,
 			wantErr: false,
 		},
 		{
 			name:    "empty report",
 			report:  models.UsageReport{},
-			want:    "{}",
+			want:    `{
+  "version": "1.0",
+  "effects": {}
+}`,
 			wantErr: false,
 		},
 	}

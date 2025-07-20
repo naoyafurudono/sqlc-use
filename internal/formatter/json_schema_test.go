@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/naoyafurudono/sqlc-use/internal/models"
@@ -52,21 +53,37 @@ func TestJSONFormatter_OutputMatchesSchema(t *testing.T) {
 				t.Errorf("Output is not valid JSON: %v", err)
 			}
 
-			// Basic structure validation
-			for queryName, operations := range tt.report {
-				if _, exists := result[queryName]; !exists {
-					t.Errorf("Query %s not found in output", queryName)
-				}
+			// Basic structure validation for new schema format
+			// Check version
+			version, hasVersion := result["version"]
+			if !hasVersion {
+				t.Errorf("Output missing 'version' field")
+			} else if version != "1.0" {
+				t.Errorf("Version is %v, want 1.0", version)
+			}
 
-				ops, ok := result[queryName].([]interface{})
-				if !ok {
-					t.Errorf("Query %s operations is not an array", queryName)
+			// Check effects
+			effects, hasEffects := result["effects"].(map[string]interface{})
+			if !hasEffects {
+				t.Errorf("Output missing 'effects' field or it's not an object")
+				return
+			}
+
+			// Validate each query is in effects
+			for queryName, operations := range tt.report {
+				effectStr, exists := effects[queryName].(string)
+				if !exists {
+					t.Errorf("Query %s not found in effects", queryName)
 					continue
 				}
 
-				if len(ops) != len(operations) {
-					t.Errorf("Query %s has %d operations in output, want %d",
-						queryName, len(ops), len(operations))
+				// Basic validation that effect string contains expected operations
+				for _, op := range operations {
+					expectedPattern := op.Operation + "[" + op.Table + "]"
+					if !contains(effectStr, expectedPattern) {
+						t.Errorf("Effect for %s doesn't contain expected pattern %s",
+							queryName, expectedPattern)
+					}
 				}
 			}
 		})
@@ -79,4 +96,8 @@ func TestJSONSchema_Exists(t *testing.T) {
 	if _, err := os.Stat(schemaPath); os.IsNotExist(err) {
 		t.Errorf("JSON schema file not found at %s", schemaPath)
 	}
+}
+
+func contains(s, substr string) bool {
+	return strings.Contains(s, substr)
 }

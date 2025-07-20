@@ -15,3 +15,9 @@ type QueryTableOp struct {
 
 // UsageReport represents the complete usage report for all queries
 type UsageReport map[string][]TableOperation
+
+// EffectsReport represents the new schema format with version and effects
+type EffectsReport struct {
+	Version string            `json:"version"`
+	Effects map[string]string `json:"effects"`
+}
