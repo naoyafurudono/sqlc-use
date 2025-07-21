@@ -195,3 +195,12 @@
 - ドキュメントの充実
 - PostgreSQL対応の追加
 - サブクエリのサポート
+
+## 2025-07-21
+
+### Lintingと整形の修正完了
+- 未使用関数`contains`をjson_schema_test.goから削除
+- 未使用のstringsインポートを削除
+- gofmtでテストファイルの整形を適用
+- .golangci.ymlファイルを削除（作業ディレクトリで既に削除済み）
+- 全てのlintチェックとCI-quickチェックが通過
