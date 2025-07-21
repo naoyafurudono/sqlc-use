@@ -16,8 +16,8 @@ func TestMySQLAnalyzer_Analyze(t *testing.T) {
 			name:      "simple select",
 			queryName: "GetUser",
 			sql:       "SELECT * FROM users WHERE id = ?",
-			want: "{ select[users] }",
-			wantErr: false,
+			want:      "{ select[users] }",
+			wantErr:   false,
 		},
 		{
 			name:      "select with join",
@@ -26,29 +26,29 @@ func TestMySQLAnalyzer_Analyze(t *testing.T) {
 				  INNER JOIN member ON user.id = member.user_id
 				  INNER JOIN organization ON organization.id = member.organization_id
 				  WHERE organization.name = ?`,
-			want: "{ select[member] | select[organization] | select[user] }",
+			want:    "{ select[member] | select[organization] | select[user] }",
 			wantErr: false,
 		},
 		{
 			name:      "insert",
 			queryName: "AddMember",
 			sql:       "INSERT INTO member (user_id, organization_id) VALUES (?, ?)",
-			want: "{ insert[member] }",
-			wantErr: false,
+			want:      "{ insert[member] }",
+			wantErr:   false,
 		},
 		{
 			name:      "update",
 			queryName: "UpdateUser",
 			sql:       "UPDATE users SET name = ? WHERE id = ?",
 			want:      "{ update[users] }",
-			wantErr: false,
+			wantErr:   false,
 		},
 		{
 			name:      "delete",
 			queryName: "RemoveMember",
 			sql:       "DELETE FROM member WHERE user_id = ? AND organization_id = ?",
-			want: "{ delete[member] }",
-			wantErr: false,
+			want:      "{ delete[member] }",
+			wantErr:   false,
 		},
 		{
 			name:      "invalid sql",
@@ -61,15 +61,15 @@ func TestMySQLAnalyzer_Analyze(t *testing.T) {
 			name:      "union simple",
 			queryName: "GetActiveAndInactiveUsers",
 			sql:       "SELECT * FROM active_users UNION SELECT * FROM inactive_users",
-			want: "{ select[active_users] | select[inactive_users] }",
-			wantErr: false,
+			want:      "{ select[active_users] | select[inactive_users] }",
+			wantErr:   false,
 		},
 		{
 			name:      "union all",
 			queryName: "GetAllTransactions",
 			sql:       "SELECT * FROM transactions_2023 UNION ALL SELECT * FROM transactions_2024",
-			want: "{ select[transactions_2023] | select[transactions_2024] }",
-			wantErr: false,
+			want:      "{ select[transactions_2023] | select[transactions_2024] }",
+			wantErr:   false,
 		},
 		{
 			name:      "union with joins",
@@ -79,7 +79,7 @@ func TestMySQLAnalyzer_Analyze(t *testing.T) {
 				  UNION
 				  SELECT c.id, c.name FROM customers c
 				  JOIN purchases p ON c.id = p.customer_id`,
-			want: "{ select[customers] | select[orders] | select[purchases] | select[users] }",
+			want:    "{ select[customers] | select[orders] | select[purchases] | select[users] }",
 			wantErr: false,
 		},
 	}
@@ -102,4 +102,3 @@ func TestMySQLAnalyzer_Analyze(t *testing.T) {
 		})
 	}
 }
-

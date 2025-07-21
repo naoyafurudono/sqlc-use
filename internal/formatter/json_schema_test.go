@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/naoyafurudono/sqlc-use/internal/models"
@@ -21,7 +20,7 @@ func TestJSONFormatter_OutputMatchesSchema(t *testing.T) {
 			report: &models.EffectsReport{
 				Version: "1.0",
 				Effects: map[string]string{
-					"GetUser": "{ select[users] }",
+					"GetUser":    "{ select[users] }",
 					"CreateUser": "{ insert[users] }",
 				},
 			},
@@ -91,8 +90,4 @@ func TestJSONSchema_Exists(t *testing.T) {
 	if _, err := os.Stat(schemaPath); os.IsNotExist(err) {
 		t.Errorf("JSON schema file not found at %s", schemaPath)
 	}
-}
-
-func contains(s, substr string) bool {
-	return strings.Contains(s, substr)
 }

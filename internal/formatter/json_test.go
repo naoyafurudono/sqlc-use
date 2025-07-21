@@ -37,7 +37,7 @@ func TestJSONFormatter_Format(t *testing.T) {
 				Version: "1.0",
 				Effects: map[string]string{
 					"ListOrganizationMember": "{ select[user] | select[member] | select[organization] }",
-					"AddMember": "{ insert[member] }",
+					"AddMember":              "{ insert[member] }",
 				},
 			},
 			want: `{
@@ -50,9 +50,9 @@ func TestJSONFormatter_Format(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:    "empty report",
-			report:  models.NewEffectsReport(),
-			want:    `{
+			name:   "empty report",
+			report: models.NewEffectsReport(),
+			want: `{
   "version": "1.0",
   "effects": {}
 }`,
