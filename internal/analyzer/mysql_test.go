@@ -102,4 +102,3 @@ func TestMySQLAnalyzer_Analyze(t *testing.T) {
 		})
 	}
 }
-
